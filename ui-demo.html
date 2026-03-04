@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 气味播放器 UI 演示</title>
+  <style>
+    :root {
+      --green: #4f7a6a;
+      --blue: #4e7d95;
+      --accent: #e79c6b;
+      --bg1: #f3f4f2;
+      --bg2: #f4f1ea;
+      --text: #253238;
+      --sub: #5e6c73;
+      --glass: rgba(255,255,255,0.62);
+      --shadow: 0 8px 24px rgba(26,40,46,0.08);
+      --radius-lg: 24px;
+      --radius-md: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "PingFang SC", "HarmonyOS Sans SC", "Noto Sans SC", sans-serif;
+      color: var(--text);
+      background: linear-gradient(160deg, var(--bg1), var(--bg2));
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.25;
+      font-weight: 600;
+    }
+
+    .sub {
+      margin: 0 0 20px;
+      color: var(--sub);
+      font-size: 15px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 20px;
+    }
+
+    .phone {
+      border-radius: 34px;
+      background: rgba(255,255,255,0.4);
+      box-shadow: 0 20px 50px rgba(26,40,46,0.12);
+      padding: 16px;
+      backdrop-filter: blur(12px);
+      min-height: 720px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 600;
+      margin: 8px 0 12px;
+    }
+
+    .search {
+      width: 100%;
+      height: 48px;
+      border-radius: 999px;
+      background: var(--glass);
+      border: 0;
+      padding: 0 16px;
+      color: var(--sub);
+      display: flex;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .tags { display: flex; gap: 8px; overflow: auto; margin: 12px 0 16px; }
+    .tag {
+      white-space: nowrap;
+      font-size: 14px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(79,122,106,0.12);
+      color: var(--green);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 72px;
+    }
+
+    .card {
+      border-radius: var(--radius-md);
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      padding: 10px;
+    }
+
+    .img {
+      width: 100%;
+      height: 130px;
+      border-radius: 16px;
+      margin-bottom: 8px;
+      background: url('assets/card-forest.svg') center/cover no-repeat;
+    }
+
+    .name { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+    .author, .meta { font-size: 12px; color: var(--sub); margin: 0; }
+
+    .nav {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 12px;
+      height: 58px;
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,0.68);
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      place-items: center;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+    }
+
+    .nav .active { color: var(--blue); font-weight: 600; }
+
+    .hero {
+      height: 220px;
+      border-radius: var(--radius-lg);
+      background: url('assets/hero-ocean.svg') center/cover no-repeat;
+      margin-bottom: 14px;
+    }
+
+    .panel {
+      border-radius: var(--radius-md);
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+    .btn {
+      height: 46px;
+      border-radius: 999px;
+      border: 0;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      box-shadow: 0 6px 16px rgba(78,125,149,0.2);
+    }
+    .btn.accent { background: linear-gradient(135deg, var(--accent), #d9876e); }
+
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .slider {
+      margin-top: 8px;
+      height: 8px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.6);
+      position: relative;
+    }
+    .slider::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 68%;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+    }
+    .slider::after {
+      content: "";
+      position: absolute;
+      left: calc(68% - 11px);
+      top: -7px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 0 6px rgba(78,125,149,0.16);
+    }
+
+    .small { font-size: 13px; color: var(--sub); margin: 6px 0 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>AI 气味播放器 UI 演示</h1>
+    <p class="sub">以下为可直接预览的三屏视觉稿（首页 / 详情页 / 创作页），文案全部为简体中文。</p>
+    <p class="sub" style="margin-top:-8px;">若无法访问 localhost，请先运行 <code>bash 启动演示.sh</code>，或直接双击本文件离线查看。</p>
+
+    <div class="grid">
+      <section class="phone">
+        <div class="title">气味社区</div>
+        <div class="search">搜索气味配方、场景、用户…</div>
+        <div class="tags">
+          <div class="tag">助眠</div><div class="tag">雨后森林</div><div class="tag">海风</div><div class="tag">木质调</div>
+        </div>
+
+        <div class="cards">
+          <article class="card"><div class="img"></div><p class="name">薄雾林地</p><p class="author">@木栖</p><p class="meta">♥ 2,430 · 💬 126</p></article>
+          <article class="card"><div class="img" style="background:url('assets/card-ocean.svg') center/cover no-repeat;"></div><p class="name">深海微光</p><p class="author">@澜舟</p><p class="meta">♥ 1,982 · 💬 93</p></article>
+          <article class="card"><div class="img" style="background:url('assets/card-citrus.svg') center/cover no-repeat;"></div><p class="name">清晨柑橘</p><p class="author">@朝露</p><p class="meta">♥ 1,207 · 💬 58</p></article>
+          <article class="card"><div class="img" style="background:url('assets/card-tea.svg') center/cover no-repeat;"></div><p class="name">山野白茶</p><p class="author">@南枝</p><p class="meta">♥ 3,021 · 💬 241</p></article>
+        </div>
+
+        <nav class="nav"><span class="active">首页</span><span>社区</span><span>创作</span><span>我的</span></nav>
+      </section>
+
+      <section class="phone" style="background:linear-gradient(160deg, rgba(111,150,169,.16), rgba(62,100,122,.08));">
+        <div class="hero"></div>
+        <div class="panel">
+          <div class="row"><strong>深海微光</strong><span class="small">@澜舟</span></div>
+          <p class="small">♥ 1,982 · 💬 93</p>
+          <div class="btns"><button class="btn">播放</button><button class="btn accent">扩散</button></div>
+        </div>
+
+        <div class="panel">
+          <div class="row"><strong>浓度调节</strong><span>68%</span></div>
+          <div class="slider"></div>
+        </div>
+
+        <div class="panel">
+          <strong>气味结构</strong>
+          <p class="small">前调：佛手柑、海盐</p>
+          <p class="small">中调：白茶、铃兰</p>
+          <p class="small">后调：雪松、麝香</p>
+        </div>
+      </section>
+
+      <section class="phone">
+        <div class="title">创作气味</div>
+        <div class="panel">
+          <div class="row"><strong>前调强度</strong><span>42</span></div>
+          <div class="slider" style="--w:42%"></div>
+        </div>
+        <div class="panel">
+          <div class="row"><strong>中调强度</strong><span>63</span></div>
+          <div class="slider"></div>
+        </div>
+        <div class="panel">
+          <div class="row"><strong>后调强度</strong><span>31</span></div>
+          <div class="slider" style="--w:31%"></div>
+        </div>
+        <div class="panel">
+          <strong>AI 推荐配方</strong>
+          <p class="small">根据当前配比，为你生成更平衡的气味方案</p>
+          <p class="small">建议：前调 38 / 中调 47 / 后调 15</p>
+          <div class="btns" style="grid-template-columns: 1fr;"><button class="btn">一键应用</button></div>
+        </div>
+        <nav class="nav"><span>首页</span><span>社区</span><span class="active">创作</span><span>我的</span></nav>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
